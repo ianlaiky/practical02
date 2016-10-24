@@ -34,34 +34,31 @@ public class BookCatalogServlet extends HttpServlet {
         List<BookDetails> bd = db.getAllList();
 
 
-      try {
+        try {
 
-          out.println("<html>");
-          out.println("<body>");
-          out.println("<table>");
+            out.println("<html>");
+            out.println("<body>");
+            out.println("<table>");
 
 
-          for (int i = 0; i < bd.size(); i++) {
+            for (int i = 0; i < bd.size(); i++) {
 
-              out.println("<tr>");
-              out.println("<td>" + bd.get(i).getTitle() + "</td>");
-              out.println("<td>" + bd.get(i).getDescription() + "</td>");
-              out.println("<td>" + bd.get(i).getYear() + "</td>");
-              out.println("</tr>");
-          }
-          out.println("</table>");
-          out.println("</body>");
-          out.println("</html>");
+                out.println("<tr>");
+                out.println("<td>" + bd.get(i).getTitle() + "</td>");
+                out.println("<td>" + bd.get(i).getDescription() + "</td>");
+                out.println("<td>" + bd.get(i).getYear() + "</td>");
+                out.println("</tr>");
+            }
+            out.println("</table>");
+            out.println("</body>");
+            out.println("</html>");
 
-          out.close();
-      }catch (Exception e){
-          e.printStackTrace();
-          throw new ServletException(e);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServletException(e);
 
         }
-
-
-
 
 
     }
