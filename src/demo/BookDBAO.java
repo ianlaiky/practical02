@@ -1,5 +1,6 @@
 package demo;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,76 +8,77 @@ import java.util.List;
  * Created by chitboon on 10/23/15.
  */
 public class BookDBAO {
-    // get book details given the bookId
-    // this method is dummy for now
+
+    Connection con;
+    // Database configuration
+    public static String url = "jdbc:mysql://localhost/test";
+    public static String dbdriver = "com.mysql.jdbc.Driver";
+    public static String username = "root";
+    public static String password = "mysql";
+
+    // constructor to load the jdbc driver, exception will be thrown if database driver is not found
+    public BookDBAO() throws Exception {
+        Class.forName(dbdriver);
+        con = DriverManager.getConnection(url, username, password);
+    }
+    // this is to make sure that connection is not null when you used it
+    public void getConnection() throws SQLException {
+        if (con == null) con = DriverManager.getConnection(url, username, password);
+    }
+
+    // Retrieve book details based on bookId, null is returned if book is not found
     public BookDetails getBookDetails(String bookId) {
-        // return dummy book for testing now
-        return createDummyBook(bookId);
+        String sql = "select * from books where id = ?";
+        BookDetails book = null;
+        try {
+            getConnection();
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1,bookId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs != null) {
+                rs.next();
+                book = new BookDetails();
+                book.setBookId(rs.getString("id"));
+                book.setDescription(rs.getString("description"));
+                book.setFirstName(rs.getString("first_name"));
+                book.setInventory(rs.getInt("inventory"));
+                book.setOnSale(rs.getBoolean("onSale"));
+                book.setPrice(rs.getFloat("price"));
+                book.setSurname(rs.getString("surname"));
+                book.setTitle(rs.getString("title"));
+                book.setYear(rs.getInt("calendar_year"));
+            }
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
     }
 
-    public List<BookDetails> getAllList() {
-
-        ArrayList<BookDetails> ba = new ArrayList<BookDetails>();
-
-
-        BookDetails b1 = new BookDetails();
-        b1.setBookId("1");
-        b1.setDescription("hhherrw");
-        b1.setFirstName("Jeeava");
-        b1.setSurname("Exeqwpert");
-        b1.setInventory(5);
-        b1.setOnSale(false);
-        b1.setPrice(5.9f);
-        b1.setTitle("Web components for developers");
-        b1.setYear(2015);
-
-
-        BookDetails b2 = new BookDetails();
-        b2.setBookId("2");
-        b2.setDescription("hrrrrrrhherrw");
-        b2.setFirstName("Jeerwwava");
-        b2.setSurname("Exeqwpert");
-        b2.setInventory(5);
-        b2.setOnSale(false);
-        b2.setPrice(5.9f);
-        b2.setTitle("Web components for developers");
-        b2.setYear(2015);
-
-
-        BookDetails b3 = new BookDetails();
-        b3.setBookId("3");
-        b3.setDescription("hhrwerweherrw");
-        b3.setFirstName("Jrrrreeava");
-        b3.setSurname("Exeqwpert");
-        b3.setInventory(5);
-        b3.setOnSale(false);
-        b3.setPrice(4.9f);
-        b3.setTitle("Web components for developers");
-        b3.setYear(2015);
-
-
-        ba.add(b1);
-        ba.add(b2);
-        ba.add(b3);
-
-        return ba;
-
-
-    }
-
-    // convenient method to create a dummy book detail
-    // this method is meant for testing
-    private BookDetails createDummyBook(String bookId) {
-        BookDetails details = new BookDetails();
-        details.setBookId(bookId);
-        details.setDescription("Web components for developers talks about how web components can transfor the way you develop application for the web");
-        details.setFirstName("Java");
-        details.setSurname("Expert");
-        details.setInventory(5);
-        details.setOnSale(false);
-        details.setPrice(5.9f);
-        details.setTitle("Web components for developers");
-        details.setYear(2015);
-        return details;
+    public List<BookDetails> getAllBook() {
+        String sql = "select * from books";
+        ArrayList<BookDetails> list = new ArrayList<BookDetails>();
+        try {
+            getConnection();
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs != null && rs.next()) {
+                BookDetails book = new BookDetails();
+                book.setBookId(rs.getString("id"));
+                book.setDescription(rs.getString("description"));
+                book.setFirstName(rs.getString("first_name"));
+                book.setInventory(rs.getInt("inventory"));
+                book.setOnSale(rs.getBoolean("onSale"));
+                book.setPrice(rs.getFloat("price"));
+                book.setSurname(rs.getString("surname"));
+                book.setTitle(rs.getString("title"));
+                book.setYear(rs.getInt("calendar_year"));
+                list.add(book);
+            }
+            pstmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
